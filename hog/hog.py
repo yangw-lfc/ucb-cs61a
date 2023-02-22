@@ -150,6 +150,7 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
             if is_swap(score1, score0):
                 score1, score0 = score0, score1
         player = other(player)
+        say = say(score0, score1)
     return (score0, score1)
     # END PROBLEM 5
     # return score0, score1
@@ -226,6 +227,13 @@ def announce_highest(who, previous_high=0, previous_score=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(score0, score1):
+        current_score = score0 if who == 0 else score1
+        score_diff = current_score - previous_score
+        if score_diff > previous_high and score_diff > 0:
+            print(str(score_diff) + (' point!' if score_diff == 1 else ' points!')  + ' That\'s the biggest gain yet for Player ' + str(who))
+        return announce_highest(who, max(previous_high, score_diff), current_score)
+    return say
     # END PROBLEM 7
 
 
@@ -265,6 +273,13 @@ def make_averaged(fn, num_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    def avg_function(*arg):
+        total = 0
+        for i in range(num_samples):
+            total += fn(*arg)
+        result = total / num_samples
+        return result
+    return avg_function
     # END PROBLEM 8
 
 
@@ -279,8 +294,15 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    max_rolls = 1
+    max_result = make_averaged(roll_dice)(1, dice)
+    for i in range(9):
+        avg_result = make_averaged(roll_dice)(i+2, dice)
+        if avg_result > max_result:
+            max_result = avg_result
+            max_rolls = i + 2
+    return max_rolls    
     # END PROBLEM 9
-
 
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
@@ -327,7 +349,7 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    return 4  # Replace this statement
+    return num_rolls if free_bacon(opponent_score) < margin else 0  # Replace this statement
     # END PROBLEM 10
 
 
@@ -337,7 +359,9 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
-    return 4  # Replace this statement
+    if (is_swap(free_bacon(opponent_score) + score, opponent_score) and free_bacon(opponent_score) + score < opponent_score) or free_bacon(opponent_score) >= margin:
+        num_rolls = 0
+    return num_rolls # Replace this statement
     # END PROBLEM 11
 
 
@@ -346,8 +370,22 @@ def final_strategy(score, opponent_score):
 
     *** YOUR DESCRIPTION HERE ***
     """
+    num_rolls = 0
+    # if less than 25 points, more aggressive
+    # if > 25 <= 50, reduce the aggressive level
+    # if > 50 <= 75 reduce the aggresive level further more
+    # if > 75, very minimum risk level
+    if score <= 25:
+        num_rolls = swap_strategy(score, opponent_score, 12, num_rolls=5)
+    elif score > 25 and score <= 50:
+        num_rolls = swap_strategy(score, opponent_score, 10, num_rolls=4)
+    elif score > 50 and score <= 75:
+        num_rolls = swap_strategy(score, opponent_score, 8, num_rolls=3)
+    else:
+        num_rolls = swap_strategy(score, opponent_score, 4, num_rolls=2)
+    
     # BEGIN PROBLEM 12
-    return 4  # Replace this statement
+    return num_rolls # Replace this statement
     # END PROBLEM 12
 
 
