@@ -183,6 +183,13 @@ def make_repeater(f, n):
     5
     """
     "*** YOUR CODE HERE ***"
+    def repeat(x):
+        k = 0
+        while k < n:
+            x = f(x)
+            k+=1
+        return x
+    return repeat    
 
 def compose1(f, g):
     """Return a function h, such that h(x) = f(g(x))."""
