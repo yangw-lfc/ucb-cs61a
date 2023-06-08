@@ -2,7 +2,7 @@
 
 from lab03 import *
 
-## Higher order functions
+# Higher order functions
 
 def cycle(f1, f2, f3):
     """Returns a function that is itself a higher-order function.
@@ -31,8 +31,23 @@ def cycle(f1, f2, f3):
     19
     """
     "*** YOUR CODE HERE ***"
+    def cycle_num(n):
+        def func_num(x):
+            i = 0
+            while i < n:
+                if i % 3 == 0:
+                    x = f1(x)
+                elif i % 3 == 1:
+                    x = f2(x)
+                else:
+                    x = f3(x)
+                i += 1
+            return x
+        return func_num
+    return cycle_num     
+        
 
-## Lambda expressions
+# Lambda expressions
 
 def is_palindrome(n):
     """
@@ -49,12 +64,12 @@ def is_palindrome(n):
     True
     """
     x, y = n, 0
-    f = lambda: _____
+    f = lambda: y * 10 + x % 10
     while x > 0:
-        x, y = _____, f()
+        x, y = x // 10, f()
     return y == n
 
-## More recursion practice
+# More recursion practice
 
 def skip_mul(n):
     """Return the product of n * (n - 2) * (n - 4) * ...
@@ -64,8 +79,8 @@ def skip_mul(n):
     >>> skip_mul(8) # 8 * 6 * 4 * 2
     384
     """
-    if n == 2:
-        return 2
+    if n == 0 or n == 1:
+        return 1
     else:
         return n * skip_mul(n - 2)
 
@@ -80,6 +95,13 @@ def is_prime(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper_function(n,k):
+        if n == k:
+            return True
+        if n % k == 0:
+            return False
+        return helper_function(n, k+1)
+    return helper_function(n,2)
 
 def interleaved_sum(n, odd_term, even_term):
     """Compute the sum odd_term(1) + even_term(2) + odd_term(3) + ..., up
@@ -90,6 +112,15 @@ def interleaved_sum(n, odd_term, even_term):
     29
     """
     "*** YOUR CODE HERE ***"
+    def helper_function(n, k, odd_term, even_term):
+        if n == k:
+            return 0
+        elif n - k == 1:
+            return odd_term(n)
+        else:
+            return odd_term(k+1) + even_term(k+2) + helper_function(n, k+2, odd_term, even_term)
+    return helper_function(n,0,odd_term,even_term)
+
 
 def ten_pairs(n):
     """Return the number of ten-pairs within positive integer n.
@@ -102,3 +133,10 @@ def ten_pairs(n):
     6
     """
     "*** YOUR CODE HERE ***"
+    def helper_function(n, k):
+        if n < 10:
+            return n == k
+        return helper_function(n//10,k) + (n%10 == k)
+    if n < 10:
+        return 0
+    return ten_pairs(n//10) + helper_function(n//10, 10-n%10)
