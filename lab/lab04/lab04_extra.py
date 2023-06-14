@@ -16,6 +16,14 @@ def flatten(lst):
     [1, 1, 1, 1, 1, 1]
     """
     "*** YOUR CODE HERE ***"
+    result = []
+    for i in lst:
+        if not type(i) == list:
+            result += [i]
+        else:
+            result += flatten(i)
+    return result
+        
 
 # Q7
 def merge(lst1, lst2):
@@ -31,6 +39,14 @@ def merge(lst1, lst2):
     [2, 4, 5, 6, 7]
     """
     "*** YOUR CODE HERE ***"
+    if not lst1 or not lst2:
+        return lst1 + lst2
+    elif lst1[0] < lst2[0]:
+        return [lst1[0]] + merge(lst1[1:], lst2)
+    elif lst1[0] > lst2[0]:
+        return [lst2[0]] + merge(lst1, lst2[1:]) 
+
+
 
 ######################
 ### Connect N Game ###
@@ -44,6 +60,7 @@ def create_row(size):
     ['-', '-', '-', '-', '-']
     """
     "*** YOUR CODE HERE ***"
+    return ['-' for _ in range(size)]
 
 
 def create_board(rows, columns):
@@ -53,6 +70,7 @@ def create_board(rows, columns):
     [['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-']]
     """
     "*** YOUR CODE HERE ***"
+    return [[i]*columns for i in create_row(rows)]
 
 
 def replace_elem(lst, index, elem):
@@ -68,6 +86,7 @@ def replace_elem(lst, index, elem):
     """
     assert index >= 0 and index < len(lst), 'Index is out of bounds'
     "*** YOUR CODE HERE ***"
+    return lst[:index] + [elem] + lst[(index + 1):]
 
 
 def get_piece(board, row, column):
@@ -83,6 +102,7 @@ def get_piece(board, row, column):
     '-'
     """
     "*** YOUR CODE HERE ***"
+    return board[row][column]
 
 
 def put_piece(board, max_rows, column, player):
@@ -106,6 +126,14 @@ def put_piece(board, max_rows, column, player):
     -1
     """
     "*** YOUR CODE HERE ***"
+    if (max_rows - 1 == 0) & (get_piece(board, max_rows-1, column) != '-'):
+        return -1, board
+    elif get_piece(board, max_rows-1, column) != '-':
+        return put_piece(board, max_rows - 1, column, player)
+    else:
+        new_row = replace_elem(board[max_rows-1], column, player)
+        new_board = replace_elem(board, max_rows-1, new_row)
+        return max_rows-1, new_board
 
 
 def make_move(board, max_rows, max_cols, col, player):
