@@ -162,6 +162,10 @@ def make_move(board, max_rows, max_cols, col, player):
     -1
     """
     "*** YOUR CODE HERE ***"
+    if col >= max_cols or col < 0:
+        return -1, board
+    else:
+        return put_piece(board, max_cols, col, player)
 
 def print_board(board, max_rows, max_cols):
     """Prints the board. Row 0 is at the top, and column 0 at the far left.
@@ -177,6 +181,11 @@ def print_board(board, max_rows, max_cols):
     X -
     """
     "*** YOUR CODE HERE ***"
+    for i in range(max_rows):
+        row_line = ''
+        for j in range(max_cols):
+            row_line += ' ' + str(get_piece(board, i, j))
+        print(row_line.strip())
 
 def check_win_row(board, max_rows, max_cols, num_connect, row, player):
     """ Returns True if the given player has a horizontal win
@@ -201,7 +210,18 @@ def check_win_row(board, max_rows, max_cols, num_connect, row, player):
     False
     """
     "*** YOUR CODE HERE ***"
-
+    col = 0
+    point = 0
+    while col < max_cols:
+        if get_piece(board, row, col) == player:
+            point += 1
+        else: 
+            point = 0
+        if point >= num_connect:
+            return True
+        col += 1
+    return False
+    
 def check_win_column(board, max_rows, max_cols, num_connect, col, player):
     """ Returns True if the given player has a vertical win in the given column,
     and otherwise False.
@@ -226,6 +246,17 @@ def check_win_column(board, max_rows, max_cols, num_connect, col, player):
     False
     """
     "*** YOUR CODE HERE ***"
+    row = 0
+    point = 0
+    while row < max_rows:
+        if get_piece(board, row, col) == player:
+            point += 1
+        else:
+            point = 0
+        if point == num_connect:
+            return True
+        row += 1
+    return False
 
 def check_win(board, max_rows, max_cols, num_connect, row, col, player):
     """Returns True if the given player has any kind of win after placing a
@@ -262,6 +293,11 @@ def check_win(board, max_rows, max_cols, num_connect, row, col, player):
     diagonal_win = check_win_diagonal(board, max_rows, max_cols, num_connect,
                                       row, col, player)
     "*** YOUR CODE HERE ***"
+    horizontal_win = check_win_row(board, max_rows, max_cols, num_connect,
+                                      row,  player)
+    vertical_win = check_win_column(board, max_rows, max_cols, num_connect,
+                                      col, player)
+    return diagonal_win or horizontal_win or vertical_win
 
 ###############################################################
 ### Functions for reference when solving the other problems ###
@@ -395,3 +431,4 @@ def start_game():
 
     board = create_board(max_rows, max_cols)
     play(board, max_rows, max_cols, num_connect)
+
